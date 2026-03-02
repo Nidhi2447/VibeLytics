@@ -1,0 +1,233 @@
+/* ==========================================================================
+   Advanced Sliding Panel CSS Animation Logic
+   ========================================================================== */
+
+.auth-wrapper {
+  background-color: var(--bg-app);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.auth-container {
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.05), 0 10px 10px rgba(0,0,0,0.02);
+  position: relative;
+  overflow: hidden;
+  width: 900px;
+  max-width: 100%;
+  min-height: 600px;
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+}
+
+.form-container form {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  text-align: center;
+}
+
+/* Base input styling for auth forms */
+.input-field {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.input-icon {
+  position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);
+  pointer-events: none;
+}
+
+.input-field input {
+  width: 100%; padding: 1rem 1rem 1rem 3rem; border: 2px solid transparent; backgroundColor: #f8fafc;
+  border-radius: 12px; font-size: 0.95rem; font-family: inherit; color: var(--text-body);
+  outline: none; transition: all 0.2s;
+  background-color: #f1f5f9;
+}
+
+.input-field input:focus {
+  background-color: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.forgot-password {
+  color: var(--primary);
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin: 0.5rem 0 1rem;
+  font-weight: 600;
+  align-self: flex-end;
+}
+
+/* Button styles */
+.btn-solid {
+  border-radius: 20px;
+  border: none;
+  background-color: var(--primary);
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 1rem 3rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-solid:active { transform: scale(0.95); }
+
+.btn-outline {
+  border-radius: 20px;
+  border: 2px solid #FFFFFF;
+  background-color: transparent;
+  color: #FFFFFF;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 1rem 3rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in, background-color 0.2s;
+  cursor: pointer;
+}
+
+.btn-outline:active { transform: scale(0.95); }
+.btn-outline:hover { background-color: rgba(255,255,255,0.1); }
+
+/* ==========================================================================
+   THE MAGIC ANIMATION SLIDING LOGIC
+   ========================================================================== */
+
+/* Initially, Sign In is on the left (0 to 50%) and visible */
+.sign-in-container {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+/* Initially, Sign Up is on the left but hidden (z-index 1, opacity 0) */
+.sign-up-container {
+  left: 0;
+  width: 50%;
+  opacity: 0;
+  z-index: 1;
+}
+
+/* The Overlay Container masks the other 50% of the card */
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 0.6s ease-in-out;
+  z-index: 100;
+}
+
+/* The Overlay is 200% width (it covers both sides) but is masked by its parent.
+   It starts pulled to the left. */
+.overlay {
+  background: var(--primary);
+  background: linear-gradient(to right, var(--primary), #0284c7); /* Beautiful cyan gradient */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 0;
+  color: #FFFFFF;
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: transform 0.6s ease-in-out;
+}
+
+.overlay-panel {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 40px;
+  text-align: center;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  transform: translateX(0);
+  transition: transform 0.6s ease-in-out;
+}
+
+/* The "Hello Friend" panel */
+.overlay-left {
+  transform: translateX(-20%);
+}
+
+/* The "Welcome Back" panel */
+.overlay-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   STATE CHANGE (.right-panel-active)
+   ========================================================================== */
+
+/* Move the Sign In container out to the right */
+.auth-container.right-panel-active .sign-in-container {
+  transform: translateX(100%);
+}
+
+/* Move the Sign Up container out to the right, make it visible, bring it forward */
+.auth-container.right-panel-active .sign-up-container {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: show 0.6s;
+}
+
+/* Move the Overlay Container from the Right to the Left */
+.auth-container.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
+
+/* Correct the background gradient position so it slides cleanly */
+.auth-container.right-panel-active .overlay {
+  transform: translateX(50%);
+}
+
+/* Slide the left overlay panel into view */
+.auth-container.right-panel-active .overlay-left {
+  transform: translateX(0);
+}
+
+/* Slide the right overlay panel out of view */
+.auth-container.right-panel-active .overlay-right {
+  transform: translateX(20%);
+}
+
+@keyframes show {
+  0%, 49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+  50%, 100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}
