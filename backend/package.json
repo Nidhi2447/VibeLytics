@@ -1,0 +1,25 @@
+{
+  "name": "vibelytics-backend",
+  "version": "1.0.0",
+  "description": "Backend for Vibelytics",
+  "main": "server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node server.js",
+    "dev": "nodemon server.js",
+    "setup": "node setup-tables.js",
+    "test": "node test-setup.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.0",
+    "@aws-sdk/client-rekognition": "^3.400.0",
+    "@aws-sdk/client-dynamodb": "^3.400.0",
+    "@aws-sdk/lib-dynamodb": "^3.400.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.400.0",
+    "@aws-sdk/client-secrets-manager": "^3.400.0",
+    "winston": "^3.11.0"
+  }
+}
