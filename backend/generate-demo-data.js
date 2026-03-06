@@ -1,7 +1,7 @@
-const { getDocClient, PutCommand } = require('../backend/lib/dynamodb');
+const { getDocClient, PutCommand } = require('./lib/dynamodb');
 const { v4: uuidv4 } = require('uuid');
 const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
-const { getAWSCredentials } = require('../backend/lib/aws-config');
+const { getAWSCredentials } = require('./lib/aws-config');
 require('dotenv').config(); // Load .env file
 
 const SUBJECTS = [

@@ -1,6 +1,6 @@
 require('dotenv').config();
-const { getAWSCredentials } = require('../backend/lib/aws-config');
-const { getLogger } = require('../backend/lib/logger');
+const { getAWSCredentials } = require('./lib/aws-config');
+const { getLogger } = require('./lib/logger');
 
 async function testSetup() {
   console.log('\n🧪 Testing Vibelytics Setup\n' + '='.repeat(60));
@@ -23,7 +23,7 @@ async function testSetup() {
     
     // Test 3: DynamoDB Connection
     console.log('\n3️⃣  Testing DynamoDB Connection...');
-    const { getDocClient, ScanCommand } = require('../backend/lib/dynamodb');
+    const { getDocClient, ScanCommand } = require('./lib/dynamodb');
     const docClient = await getDocClient();
     
     try {
