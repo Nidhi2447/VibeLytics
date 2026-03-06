@@ -5,7 +5,7 @@ import { useAppContext } from '../context/AppContext';
 
 export default function Layout() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { activeClass, alerts, markAllRead, isMonitoring } = useAppContext();
+  const { activeClass, alerts, markAllRead, isMonitoring, todaySessions } = useAppContext();
 
   const unreadCount = alerts.filter(n => !n.read).length;
 
@@ -22,9 +22,14 @@ export default function Layout() {
         </NavLink>
         
         <nav className="nav-menu">
-          <NavLink to="/" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
-            <LayoutDashboard size={20} />
-            Overview
+          <NavLink to="/" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <LayoutDashboard size={20} />
+              Overview
+            </span>
+            {todaySessions > 0 && (
+              <span style={{ backgroundColor: 'var(--primary)', color: '#fff', fontSize: '0.68rem', fontWeight: 800, padding: '0.1rem 0.45rem', borderRadius: '20px', lineHeight: 1.4 }}>{todaySessions}</span>
+            )}
           </NavLink>
           <NavLink to="/live" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} style={{ display: 'flex', alignItems: 'center' }}>
             <Radio size={20} />
@@ -34,6 +39,15 @@ export default function Layout() {
           <NavLink to="/reports" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             <BarChart3 size={20} />
             Reports
+          </NavLink>
+          <NavLink to="/alerts" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <Bell size={20} />
+              Alerts
+            </span>
+            {unreadCount > 0 && (
+              <span style={{ backgroundColor: 'var(--danger)', color: '#fff', fontSize: '0.68rem', fontWeight: 800, padding: '0.1rem 0.45rem', borderRadius: '20px', lineHeight: 1.4 }}>{unreadCount}</span>
+            )}
           </NavLink>
           <NavLink to="/settings" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} style={{ marginTop: '1rem' }}>
             <Settings size={20} />

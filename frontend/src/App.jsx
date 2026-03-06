@@ -6,6 +6,7 @@ import LiveFeed from './pages/LiveFeed';
 import SessionAnalytics from './pages/SessionAnalytics';
 import Auth from './pages/Auth';
 import Reports from './pages/Reports';
+import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 import { AppProvider } from './context/AppContext';
 
@@ -21,6 +22,7 @@ function App() {
             <Route path="analytics" element={<SessionAnalytics />} />
             <Route path="live" element={<LiveFeed />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="alerts" element={<Alerts />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

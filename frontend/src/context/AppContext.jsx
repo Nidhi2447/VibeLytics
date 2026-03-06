@@ -6,9 +6,10 @@ const AppContext = createContext();
 export function AppProvider({ children }) {
   // -- GLOBAL STATE --
   const [isMonitoring, setIsMonitoring] = useState(false);
-  const [sessionTime, setSessionTime] = useState(0); // seconds
+  const [sessionTime, setSessionTime] = useState(0);
   const [activeStudents, setActiveStudents] = useState(32);
   const [activeClass, setActiveClass] = useState('Section 10-B');
+  const [todaySessions, setTodaySessions] = useState(0);
   
   // Camera State
   const [cameraStream, setCameraStream] = useState(null);
@@ -218,13 +219,14 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      isMonitoring, setIsMonitoring, handleStopMonitoring,
+    isMonitoring, setIsMonitoring, handleStopMonitoring,
       sessionTime, activeStudents, activeClass, setActiveClass,
       currentData, aiSuggestion, graphData,
       alerts, markAllRead,
       showSummary, sessionStats, closeSummary,
       cameraStream, cameraError,
-      videoDevices, selectedDeviceId, setSelectedDeviceId, switchCamera
+      videoDevices, selectedDeviceId, setSelectedDeviceId, switchCamera,
+      todaySessions, setTodaySessions
     }}>
       {children}
     </AppContext.Provider>
