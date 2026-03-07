@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { Users, Sparkles, Smile, Meh, Frown, HelpCircle, ChevronDown, CheckCircle2, TrendingUp, TrendingDown, Clock, FileText, Bell, PlayCircle, AlertCircle, Flame, Target, RefreshCcw } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { api } from '../api';
 import WelcomeTour from '../components/WelcomeTour';
 
 // --- Helpers ---
@@ -80,8 +81,7 @@ export default function Dashboard() {
     
     try {
       // Fetch summary data
-      const summaryRes = await fetch('http://localhost:3001/api/reports/summary?teacherId=teacher-001');
-      const data = await summaryRes.json();
+      const data = await api.getReports('teacher-001', 1);
       
       setTodaySessions(data.todaySessions || 0);
       setCtxTodaySessions(data.todaySessions || 0);
@@ -100,23 +100,15 @@ export default function Dashboard() {
       // Fetch daily insight from Bedrock if we have sessions
       if (data.totalSessions > 0 && data.lastSession) {
         try {
-          const insightRes = await fetch('http://localhost:3001/api/insights/daily', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              avgEngagement: data.todayAvgEngagement || data.avgEngagement,
-              mostCommonEmotion: data.mostCommonEmotion,
-              weekOverWeekChange: data.weekOverWeekChange,
-              totalSessions: data.totalSessions,
-              activeClass: activeClass
-            })
+          const insightData = await api.getDailyInsight({
+            avgEngagement: data.todayAvgEngagement || data.avgEngagement,
+            mostCommonEmotion: data.mostCommonEmotion,
+            weekOverWeekChange: data.weekOverWeekChange,
+            totalSessions: data.totalSessions,
+            activeClass: activeClass
           });
-          
-          if (insightRes.ok) {
-            const insightData = await insightRes.json();
-            setDailyInsight(insightData.insight || 'Your students are showing consistent engagement patterns.');
-            setInsightRefreshedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-          }
+          setDailyInsight(insightData.insight || 'Your students are showing consistent engagement patterns.');
+          setInsightRefreshedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
         } catch (err) {
           console.error('Failed to fetch daily insight:', err);
           // Keep default insight
@@ -130,8 +122,7 @@ export default function Dashboard() {
     }
 
     // Fetch alerts
-    fetch('http://localhost:3001/api/alerts?teacherId=teacher-001&dismissed=false&limit=3')
-      .then(r => r.json())
+    api.getAlerts('teacher-001', false, 3)
       .then(data => setBackendAlerts(data.alerts || []))
       .catch(() => setBackendAlerts([]));
   };

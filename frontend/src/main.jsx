@@ -10,7 +10,8 @@ window.logError = (errorData) => {
   
   // In production, send to backend logging endpoint
   if (import.meta.env.PROD) {
-    fetch('http://localhost:3001/api/log/error', {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    fetch(`${API_URL}/api/log/error`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(errorData)

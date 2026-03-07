@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 class APIError extends Error {
   constructor(message, statusCode, requestId) {
@@ -68,6 +68,12 @@ export const api = {
     apiRequest('/api/analyze/frame', {
       method: 'POST',
       body: JSON.stringify({ imageBase64, sessionId, teacherId, settings })
+    }),
+
+  getDailyInsight: (data) =>
+    apiRequest('/api/insights/daily', {
+      method: 'POST',
+      body: JSON.stringify(data)
     }),
 
   getLiveInsight: (emotions, subject, durationMinutes) =>
