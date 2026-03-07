@@ -11,12 +11,27 @@ require('dotenv').config();
 const app = express();
 const httpServer = createServer(app);
 
+// Allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://vibelytics-frontend.s3-website-us-east-1.amazonaws.com',
+  'https://d3naho4ygvnmlc.cloudfront.net',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 const io = new Server(httpServer, {
-  cors: { origin: process.env.FRONTEND_URL || 'http://localhost:5173', methods: ['GET','POST'] }
+  cors: { 
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
 });
 
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+app.use(cors({ 
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json({ limit: '15mb' }));
 
 // Attach io to requests
