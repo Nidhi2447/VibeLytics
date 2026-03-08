@@ -62,14 +62,15 @@ router.post('/end',
   validateRequired(['teacherId', 'sessionId']),
   asyncHandler(async (req, res) => {
     const logger = getLogger();
-    const { teacherId, sessionId, finalEmotions, avgEngagement, subject } = req.body;
+    const { teacherId, sessionId, finalEmotions, avgEngagement, subject, forceSaved } = req.body;
     const endTime = new Date().toISOString();
 
     logger.info('Ending session', {
       requestId: req.id,
       teacherId,
       sessionId,
-      avgEngagement
+      avgEngagement,
+      forceSaved: forceSaved || false
     });
 
     let summary = 'Session completed successfully.';
@@ -94,24 +95,35 @@ router.post('/end',
 
     try {
       const docClient = await getDocClient();
+      
+      // Build update expression dynamically to include forceSaved if true
+      let updateExpression = 'SET #s = :s, endTime = :e, avgEngagement = :a, emotionSummary = :em, summary = :sum, peakEmotion = :pe';
+      const expressionAttributeValues = {
+        ':s': 'ended',
+        ':e': endTime,
+        ':a': avgEngagement || 0,
+        ':em': emotionsData,
+        ':sum': summary,
+        ':pe': peakEmotion
+      };
+      
+      if (forceSaved) {
+        updateExpression += ', forceSaved = :fs';
+        expressionAttributeValues[':fs'] = true;
+      }
+      
       await docClient.send(new UpdateCommand({
         TableName: 'vibelytics-sessions',
         Key: { teacherId, sessionId },
-        UpdateExpression: 'SET #s = :s, endTime = :e, avgEngagement = :a, emotionSummary = :em, summary = :sum, peakEmotion = :pe',
+        UpdateExpression: updateExpression,
         ExpressionAttributeNames: { '#s': 'status' },
-        ExpressionAttributeValues: {
-          ':s': 'ended',
-          ':e': endTime,
-          ':a': avgEngagement || 0,
-          ':em': emotionsData,
-          ':sum': summary,
-          ':pe': peakEmotion
-        }
+        ExpressionAttributeValues: expressionAttributeValues
       }));
       
       logger.info('Session ended successfully', {
         requestId: req.id,
-        sessionId
+        sessionId,
+        forceSaved: forceSaved || false
       });
       
       // Clear cache for this teacher

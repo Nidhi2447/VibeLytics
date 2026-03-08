@@ -251,7 +251,7 @@ export default function LiveFeed() {
         )
       : emotionsRef.current
 
-    const finalDuration = Math.round(durationRef.current / 60)
+    const finalDuration = Math.floor(durationRef.current / 60)
     
     // Load minimum session duration from settings
     const savedSettings = localStorage.getItem('vibelytics-settings')
@@ -269,6 +269,8 @@ export default function LiveFeed() {
     if (finalDuration < minSessionDuration) {
       // Store pending session data and show confirmation modal
       setPendingSessionData({
+        sessionId: sessionId,
+        subject: subject,
         finalEmotions,
         finalEng,
         finalDuration,
@@ -279,17 +281,34 @@ export default function LiveFeed() {
     }
 
     // Session is long enough, save automatically
-    await saveSession(finalEmotions, finalEng, finalDuration)
+    await saveSession(sessionId, subject, finalEmotions, finalEng, finalDuration)
   }
   
-  const saveSession = async (finalEmotions, finalEng, finalDuration) => {
-    try { await api.endSession(TEACHER_ID, sessionId, finalEmotions, finalEng, subject) }
-    catch (e) {}
+  const saveSession = async (sessionIdToSave, sessionSubject, finalEmotions, finalEng, finalDuration, forceSaved = false) => {
+    console.log('=== saveSession called ===')
+    console.log('sessionIdToSave:', sessionIdToSave)
+    console.log('sessionSubject:', sessionSubject)
+    console.log('finalEmotions:', finalEmotions)
+    console.log('finalEng:', finalEng)
+    console.log('finalDuration:', finalDuration)
+    console.log('forceSaved:', forceSaved)
+    
+    try { 
+      console.log('Calling api.endSession...')
+      const result = await api.endSession(TEACHER_ID, sessionIdToSave, finalEmotions, finalEng, sessionSubject, forceSaved)
+      console.log('Session saved successfully! Result:', result)
+    }
+    catch (e) {
+      console.error('Failed to save session:', e)
+      alert('Failed to save session: ' + e.message)
+    }
 
     // Show session saved modal
     const topEmotion = Object.entries(finalEmotions).sort((a, b) => b[1] - a[1])[0]?.[0] || 'happy'
+    console.log('Top emotion:', topEmotion)
+    
     setSavedStats({
-      subject: subject.trim() || 'Session',
+      subject: sessionSubject.trim() || 'Session',
       duration: finalDuration,
       avgEngagement: finalEng,
       peakEmotion: topEmotion
@@ -304,17 +323,34 @@ export default function LiveFeed() {
     setEngagementScore(0)
     setActiveStudents(0)
     setChartData([])
+    
+    console.log('=== saveSession complete ===')
   }
   
   const handleConfirmSave = async () => {
+    console.log('handleConfirmSave called')
+    console.log('pendingSessionData:', pendingSessionData)
+    
     setShowConfirmModal(false)
+    
     if (pendingSessionData) {
+      console.log('Saving session with ID:', pendingSessionData.sessionId)
+      console.log('Subject:', pendingSessionData.subject)
+      console.log('Duration:', pendingSessionData.finalDuration, 'minutes')
+      console.log('Engagement:', pendingSessionData.finalEng, '%')
+      console.log('Force saving short session!')
+      
       await saveSession(
+        pendingSessionData.sessionId,
+        pendingSessionData.subject,
         pendingSessionData.finalEmotions,
         pendingSessionData.finalEng,
-        pendingSessionData.finalDuration
+        pendingSessionData.finalDuration,
+        true // forceSaved = true
       )
       setPendingSessionData(null)
+    } else {
+      console.error('No pending session data!')
     }
   }
   

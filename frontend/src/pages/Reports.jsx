@@ -105,6 +105,7 @@ export default function Reports() {
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
+    a.href = url;
     const filterSuffix = selectedSubject === 'all' ? 'all' : selectedSubject.toLowerCase().replace(/\s+/g, '-');
     a.download = `vibelytics-report-${filterSuffix}-${new Date().toISOString().split('T')[0]}.csv`;
     

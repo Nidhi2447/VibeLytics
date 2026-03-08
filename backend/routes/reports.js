@@ -11,24 +11,29 @@ function getVibeColor(score) {
 }
 
 function isValidSession(s, minDurationMinutes = 1) {
-  if (!s || s.status !== 'ended') return false
+  if (!s || s.status !== 'ended') return false;
   
   // Require a real, non-empty subject name
-  const sub = (s.subject || '').trim().toLowerCase()
-  if (!sub || sub === 'unknown' || sub === 'unnamed session') return false
+  const sub = (s.subject || '').trim().toLowerCase();
+  if (!sub || sub === 'unknown' || sub === 'unnamed session') return false;
+  
+  // If session was force saved by user, always include it regardless of duration
+  if (s.forceSaved === true) {
+    return true;
+  }
   
   // Filter out sessions less than minimum duration
   if (s.startTime && s.endTime) {
-    const startMs = new Date(s.startTime).getTime()
-    const endMs = new Date(s.endTime).getTime()
-    const durationMinutes = (endMs - startMs) / 60000
+    const startMs = new Date(s.startTime).getTime();
+    const endMs = new Date(s.endTime).getTime();
+    const durationMinutes = (endMs - startMs) / 60000;
     
     if (durationMinutes < minDurationMinutes) {
-      return false
+      return false;
     }
   }
   
-  return true
+  return true;
 }
 
 function calcStreak(sessions) {

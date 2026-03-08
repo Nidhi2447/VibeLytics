@@ -58,10 +58,10 @@ export const api = {
       body: JSON.stringify({ teacherId, subject, sectionName: 'Section 10-B' })
     }),
 
-  endSession: (teacherId, sessionId, finalEmotions, avgEngagement, subject) =>
+  endSession: (teacherId, sessionId, finalEmotions, avgEngagement, subject, forceSaved = false) =>
     apiRequest('/api/session/end', {
       method: 'POST',
-      body: JSON.stringify({ teacherId, sessionId, finalEmotions, avgEngagement, subject })
+      body: JSON.stringify({ teacherId, sessionId, finalEmotions, avgEngagement, subject, forceSaved })
     }),
 
   analyzeFrame: (imageBase64, sessionId, teacherId, settings) =>
